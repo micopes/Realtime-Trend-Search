@@ -1,0 +1,4 @@
+# Key file 표시 안되도록
+/js/key.txt
+
+# SearchBlog.js, Trend.js 두 파일에서 key 모두 확인 후 표시 안되도록 해야 한다.

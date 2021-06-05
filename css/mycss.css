@@ -1,0 +1,169 @@
+/* 전체 page font */
+* {
+  font-family: 'Jua', sans-serif;
+}
+/* background color */
+body {
+  background-color: rgb(135, 159, 182);
+}
+/* h1 */
+h1 {
+  color : rgb(7, 36, 39);
+  text-align: center;
+  text-decoration: underline;
+}
+/* h2 */
+h2{
+  text-decoration: underline;
+}
+/* strong */
+strong {
+  color: red;
+  text-decoration: underline;
+}
+/* 눌려지지 않은 트렌드 검색 버튼 */
+.button1{
+  background-color: cornsilk;
+  border: black;
+  color: rgb(0, 0, 0);
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+}
+/* 트렌드 검색 버튼 눌림 효과 */
+.button1:active{ 
+  background-color: #c5c76a; 
+  border: black;
+  color: rgb(0, 0, 0);
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+}
+/* 눌려지지 않은 뉴스 검색 버튼 */
+.button2{
+  background-color: rgb(220, 248, 255);
+  border: black;
+  color: rgb(0, 0, 0);
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+}
+/* 뉴스 검색 버튼 눌림 효과 */
+.button2:active{ 
+  background-color: #6ec4cf; 
+  border: black;
+  color: rgb(0, 0, 0);
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+}
+/* 눌려지지 않은 블로그 검색 버튼 */
+.button3{
+  background-color: rgb(247, 220, 255);
+  border: black;
+  color: rgb(0, 0, 0);
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+}
+
+/* 블로그 검색 버튼 눌림 효과 */
+.button3:active{ 
+  background-color: #c96abc; 
+  border: black;
+  color: rgb(0, 0, 0);
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+}
+/* footer background */
+.darkbackground{
+  background-color: rgb(175, 175, 199); 
+  color: white;
+  text-align: center;
+  clear: left;
+  float: inline-end;
+  margin : 10px;
+  border-radius: 10px;
+}
+/* 트렌드 검색 사용 설명 style */
+#mystyle {
+    margin : 10px;
+    float:right;
+    margin: 50px;
+    padding: 50px;
+    font-style: bold;
+    border-radius: 10px;
+} 
+/* 트렌드 검색 style */
+#trend_style {
+  margin : 10px;
+  margin: 50px;
+  border: 10px solid cornsilk;
+  padding: 50px;
+  font-style: bold;
+  border-radius: 10px;
+} 
+/* 뉴스 검색 style */
+#news_style {
+  margin : 10px;
+  margin: 50px;
+  border: 10px solid rgb(220, 248, 255);
+  padding: 50px;
+  font-style: bold;
+  border-radius: 10px;
+} 
+/* 블로그 검색 style */
+#blog_style {
+  margin : 10px;
+  margin: 50px;
+  border: 10px solid rgb(247, 220, 255);
+  padding: 50px;
+  font-style: bold;
+  border-radius: 10px;
+} 
+/* navigation bar style */
+nav { 
+  margin : 10px;
+  background-color:#ffffff; 
+  border-radius: 3px;
+
+}
+/* horizontal tab */
+div.horizontalgap {
+  float: left;
+  overflow: hidden;
+  height: 1px;
+  width: 0px;
+}
+/* 주제어 출력 */
+#msg {
+  margin : 10px;
+  padding: 10px;
+  font-size : 14px;
+  color : #c5c76a;
+  text-align : left;
+}
+/* 뉴스 검색어 출력 */
+#msg2 {
+  margin : 10px;
+  padding: 10px;
+  font-size : 14px;
+  color : #6ec4cf;
+  text-align : left;
+}
+/* 블로그 검색어 출력 */
+#msg3 {
+  margin : 10px;
+  padding: 10px;
+  font-size : 14px;
+  color : #c96abc;
+  text-align : left;
+}
+

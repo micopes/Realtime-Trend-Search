@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>실시간 트렌드 검색</title>
+    <meta charset = "UTF-8">
+    <meta name = "description"
+    content = "Real-time Search">
+    <meta name = "author"
+    content = "강민진">
+    <link rel = "stylesheet" href = "css/mycss.css">
+    <link rel = "stylesheet" href = "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    <!-- google font 사용 ㅣ 'Jua 체'-->
+    <link rel = "preconnect" href = "https://fonts.gstatic.com">
+    <link href = "https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet"> 
+    <script src = "js/SearchBlog.js"></script> <!-- 블로그 검색 -->
+    <script src = "js/SearchNews.js"></script> <!-- 뉴스 검색 -->
+    <script src = "js/Trend.js"></script> <!-- 트렌드 검색 -->
+
+    <!-- jQuery 연동 -->
+    <script src = "https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script type = "text/javascript">
+        $(document).ready(function() { // 검색 버튼을 누르면 이벤트
+            $(":button").click(function(){
+                alert($(this).val() + "결과 출력");
+            });
+        });
+    </script>
+
+    <script>
+    // 트렌드 검색
+    function loadTrend(startDate, endDate, timeUnit, groupName, keyword1, keyword2, keyword3, keyword4, keyword5){
+        var data = JSON.stringify({
+        "startDate": startDate,
+        "endDate": endDate,
+        "timeUnit": timeUnit,
+        "keywordGroups": [
+            {
+            "groupName": groupName,
+            "keywords": [
+                keyword1,
+                keyword2,
+                keyword3,
+                keyword4,
+                keyword5
+            ]
+            }
+        ]
+        });
+
+        // var XMLHttpRequest = require('xhr2'); // XMLHttpRequest 잘 동작하지 않을 경우 npm install xhr2 후 xhr2를 내장
+        var xhr = new XMLHttpRequest();
+        xhr.withCredentials = true;
+
+        xhr.addEventListener("readystatechange", function() {
+        if(this.readyState === 4) {
+            var message;
+            switch(this.status) {
+                case '200':
+                     message = "Data uploaded successfully.";
+                break;
+
+                case '406':
+                    message = "Incorrect file format.  Please try again.";
+                break;
+
+                case '410':
+                    message = "Unexpected error.  Please contact support.";
+                break;
+
+                default:
+                break;
+            }
+        
+            //console.log(this.responseText);
+            // document.getElementById("trend_rawdata").innerHTML = this.responseText;
+            console.log(this.response);
+            // document.getElementById("trend_rawdata").innerHTML = this.response;
+            const {startDate, endDate, timeUnit, results} = this.response;
+            document.getElementById("startDate").innerHTML = startDate;
+            document.getElementById("endDate").innerHTML = endDate;
+            document.getElementById("timeUnit").innerHTML = timeUnit;
+            //document.getElementById("test4").innerHTML = results;
+
+            const {title, keywords, data} = results[0];
+            const keywordsString = keywords.join(', ');
+            const dataList = data.map( dataItem => {
+                return `<p>${dataItem.period}: ${dataItem.ratio}</p>`;
+            })
+            const dataString = dataList.join(' ');
+
+            document.getElementById("test1").innerHTML = title;
+            document.getElementById("test2").innerHTML = keywordsString;
+            document.getElementById("test3").innerHTML = dataString;
+        }
+        });
+
+        xhr.open("POST", "https://cors-anywhere.herokuapp.com/https://openapi.naver.com/v1/datalab/search");
+        xhr.responseType = 'json'; // json type
+        // KEY!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        xhr.setRequestHeader("X-Naver-Client-Id", "");
+        xhr.setRequestHeader("X-Naver-Client-Secret", "");
+        xhr.setRequestHeader("Content-Type", "application/json");
+
+        xhr.send(data);
+    }
+    // 뉴스 검색
+    function loadNews(string){
+        var xhr = new XMLHttpRequest();
+        xhr.withCredentials = true;
+
+        xhr.addEventListener("readystatechange", function() {
+        if(this.readyState === 4) {
+            var message;
+            switch(this.status) {
+                case '200':
+                     message = "Data uploaded successfully.";
+                break;
+
+                case '406':
+                    message = "Incorrect file format.  Please try again.";
+                break;
+
+                case '410':
+                    message = "Unexpected error.  Please contact support.";
+                break;
+
+                default:
+                break;
+            }
+            // console.log(this.responseText);
+            console.log(this.response);
+            // document.getElementById("news_rawdata").innerHTML = this.responseText;
+            const {lastBuildDate, total, start, display, items} = this.response;
+            document.getElementById("news_lastBuildDate").innerHTML = lastBuildDate;
+            document.getElementById("news_total").innerHTML = total;
+            document.getElementById("news_start").innerHTML = start;
+            document.getElementById("news_display").innerHTML = display;
+            document.getElementById("news_items1").innerHTML = items[0].title;
+            document.getElementById("news_items2").innerHTML = items[0].originallink;
+            document.getElementById("news_items3").innerHTML = items[0].link;
+            document.getElementById("news_items4").innerHTML = items[0].description;
+            document.getElementById("news_items5").innerHTML = items[0].pubDate;
+            document.getElementById("news_items6").innerHTML = items[1].title;
+            document.getElementById("news_items7").innerHTML = items[1].originallink;
+            document.getElementById("news_items8").innerHTML = items[1].link;
+            document.getElementById("news_items9").innerHTML = items[1].description;
+            document.getElementById("news_items10").innerHTML = items[1].pubDate;
+            document.getElementById("news_items11").innerHTML = items[2].title;
+            document.getElementById("news_items12").innerHTML = items[2].originallink;
+            document.getElementById("news_items13").innerHTML = items[2].link;
+            document.getElementById("news_items14").innerHTML = items[2].description;
+            document.getElementById("news_items15").innerHTML = items[2].pubDate;
+        }
+        });
+        // https://cors-anywhere.herokuapp.com/ 를 통해 프록시 서버를 사용해서 우회하여 Cors 문제 해결
+        xhr.open("GET", "https://cors-anywhere.herokuapp.com/https://openapi.naver.com/v1/search/news.json?query=" + string + "&display=3");
+        xhr.responseType = 'json'; // json type
+        // KEY!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        xhr.setRequestHeader("X-Naver-Client-Id", "");
+        xhr.setRequestHeader("X-Naver-Client-Secret", "");
+
+        xhr.send();
+    }
+    // 블로그 검색
+    function loadBlog(string){
+        var xhr = new XMLHttpRequest();
+        xhr.withCredentials = true;
+
+        xhr.addEventListener("readystatechange", function() {
+        if(this.readyState === 4) {
+            var message;
+            switch(this.status) {
+                case '200':
+                     message = "Data uploaded successfully.";
+                break;
+
+                case '406':
+                    message = "Incorrect file format.  Please try again.";
+                break;
+
+                case '410':
+                    message = "Unexpected error.  Please contact support.";
+                break;
+
+                default:
+                break;
+            }
+            // console.log(this.responseText);
+            console.log(this.response);
+            // document.getElementById("news_rawdata").innerHTML = this.responseText;
+            const {lastBuildDate, total, start, display, items} = this.response;
+            document.getElementById("blog_lastBuildDate").innerHTML = lastBuildDate;
+            document.getElementById("blog_total").innerHTML = total;
+            document.getElementById("blog_start").innerHTML = start;
+            document.getElementById("blog_display").innerHTML = display;
+            document.getElementById("blog_items1").innerHTML = items[0].title;
+            document.getElementById("blog_items2").innerHTML = items[0].link;
+            document.getElementById("blog_items3").innerHTML = items[0].description;
+            document.getElementById("blog_items4").innerHTML = items[0].bloggername;
+            document.getElementById("blog_items5").innerHTML = items[0].bloggerlink;
+            document.getElementById("blog_items6").innerHTML = items[0].postdate;
+            document.getElementById("blog_items7").innerHTML = items[1].title;
+            document.getElementById("blog_items8").innerHTML = items[1].link;
+            document.getElementById("blog_items9").innerHTML = items[1].description;
+            document.getElementById("blog_items10").innerHTML = items[1].bloggername;
+            document.getElementById("blog_items11").innerHTML = items[1].bloggerlink;
+            document.getElementById("blog_items12").innerHTML = items[1].postdate;
+            document.getElementById("blog_items13").innerHTML = items[2].title;
+            document.getElementById("blog_items14").innerHTML = items[2].link;
+            document.getElementById("blog_items15").innerHTML = items[2].description;
+            document.getElementById("blog_items16").innerHTML = items[2].bloggername;
+            document.getElementById("blog_items17").innerHTML = items[2].bloggerlink;
+            document.getElementById("blog_items18").innerHTML = items[2].postdate;
+        }
+        });
+        // https://cors-anywhere.herokuapp.com/ 를 통해 프록시 서버를 사용해서 우회하여 Cors 문제 해결
+        xhr.open("GET", "https://cors-anywhere.herokuapp.com/https://openapi.naver.com/v1/search/blog.json?query=" + string + "&display=3");
+        xhr.responseType = 'json'; // json type
+        // KEY!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        xhr.setRequestHeader("X-Naver-Client-Id", "");
+        xhr.setRequestHeader("X-Naver-Client-Secret", "");
+
+        xhr.send();
+    }
+
+    function show(){
+		var tmp = myform.txt1.value;
+        str = "주제어는: " + tmp;
+		document.getElementById("msg").innerHTML = str;
+    } 
+    function show2(){
+		var tmp = myform2.txt2.value;
+        str = "검색어는: " + tmp;
+		document.getElementById("msg2").innerHTML = str;
+    }
+    function show3(){
+		var tmp = myform3.txt3.value;
+        str = "검색어는: " + tmp;
+		document.getElementById("msg3").innerHTML = str;
+    }
+
+    function newsSearch(){
+        var tmp = myform2.txt2.value;
+        // 뉴스 검색 인자 전달
+        loadNews(tmp);
+    }
+
+    function blogSearch(){
+        var tmp = myform3.txt3.value;
+        // 블로그 검색 인자 전달
+        loadBlog(tmp);
+    }
+    // Trend 검색
+    function trendSearch(){
+        // 공백이면 에러 처리.
+        var startDate = myform.startDate.value; // 시작 날짜
+        var endDate = myform.endDate.value; // 마감 날짜 
+        var timeUnit = myform.timeUnit.value; // 시간 단위
+        var groupName = myform.txt1.value; // 주제어
+        var keyword1 = myform.keyword1.value; // 키워드 1
+        var keyword2 = myform.keyword2.value;
+        var keyword3 = myform.keyword3.value;
+        var keyword4 = myform.keyword4.value;
+        var keyword5 = myform.keyword5.value;
+        // 트렌드 검색 인자 전달
+        loadTrend(startDate, endDate, timeUnit, groupName, keyword1, keyword2, keyword3, keyword4, keyword5);
+    }
+ 
+    </script>
+
+</head>
+
+<body>
+    <h1 id = "Home" style = "text-align:center;">실시간 트렌드 검색(Real-time Trend Search)</h1>
+    <p style = "text-align:center;">
+        <figure style = "text-align:center;">
+            <img src = "image/1.jpg" width = "200" height = "45">
+        </figure>
+    </p>
+    <header>
+        <nav>
+        <h2>
+            <a href = "#Home">Home</a>
+            |
+            <a href = "#A">트렌드 검색</a>
+            |
+            <a href = "#B">검색(네이버 뉴스)</a>
+            |
+            <a href = "#C">검색(네이버 블로그)</a>
+        </h2>
+        </nav>
+    </header>
+        
+    <hr>
+
+    <div id = "mystyle">
+        <h1>트렌드 검색 사용 방법</h1>
+        <hr>
+        <li>시작 날짜[startDate]</li>
+        <li>마감 날짜[endDate]</li>
+        <li>시간 단위[timeUnit]</li>
+        <li>주제어[groupName]</li>
+        <li>주제어에 해당하는 검색어 묶음 쌍[keywords]</li>
+        
+        <h3>위의 내용 <strong>모두</strong> 입력 후 트렌드 검색 버튼 클릭!!</h3>
+
+        구간별 검색량의 상대적 비율. 구간별 결과에서 가장 큰 값을 100으로 설정하여 0 ~ 100까지를 표시해준다.
+
+    </div>
+
+    <div id = "trend_style">
+        <h2 id = "A"> 트렌드 검색 </h2>
+        
+        <ul style = "list-style-type:square;">
+            <form name="myform"> <!-- myform을 이용해서 트렌드 검색 인자 전달-->
+            <li><span class = "fa fa-calendar"></span> 시작 날짜[startDate]</li> 
+                <input type="date" name="startDate" size="15">
+            <li><span class = "fa fa-calendar"></span> 마감 날짜[endDate]</li>
+                <input type="date" name="endDate" size="15">
+            <li><span class = "fa fa-clock-o"></span> 시간 단위(timeUnit) [월(month)/주(week)/일(date)]</li>
+                <select name = "timeUnit">
+                    <option value = "">시간 단위 선택</option>
+                    <option value = "month">월(month)</option>
+                    <option value = "week">주(week)</option>
+                    <option value = "date">일(date)</option>
+                </select>
+            <li><span class = "fa fa-comments-o"></span> keywordGroups</li>
+            <p>
+                    <div class="horizontalgap" style="width:10px"></div>
+                    <span class = "fa fa-commenting"></span> 주제어[groupName]<br>
+                    <input type="text" name="txt1" size="15">
+                    <div id="msg"></div>
+                
+                <div class="horizontalgap" style="width:10px"></div>
+                <span class = "fa fa-comments"></span> 주제어에 해당하는 검색어 묶음 쌍[keywords]
+                <fieldset>
+                    <label>keyword1: <input type = "text" name = "keyword1" size = "10"></label>
+                    <label>keyword2: <input type = "text" name = "keyword2" size = "10"></label>
+                    <label>keyword3: <input type = "text" name = "keyword3" size = "10"></label>
+                    <label>keyword4: <input type = "text" name = "keyword4" size = "10"></label>
+                    <label>keyword5: <input type = "text" name = "keyword5" size = "10"></label>
+                </fieldset>
+                <br>
+                <input type="button" class = "button1" value="트렌드 검색" onclick="show(), trendSearch()">
+            </p>
+            
+            <hr>
+            
+            <!-- 
+                <div id = "trend_rawdata"></div> 
+            -->
+            <div id = "startDate"></div>
+            <div id = "endDate"></div>
+            <div id = "timeUnit"></div>
+            <div id = "test1"></div>
+            <div id = "test2"></div>
+            <div id = "test3"></div>
+            <hr>
+            
+            
+
+            </form>
+            
+        </ul>
+
+    </div>
+    
+    <div id = "news_style">
+        <h2 id = "B"> 네이버 뉴스 </h2>
+            <form name = "myform2"> 
+                <input type = "text" name = "txt2" size = "15">
+                <br><br>
+                <input type = "button" class = "button2" value = "뉴스 검색" onclick="show2(), newsSearch()"> 	 
+                <div id="msg2"></div>
+                <!-- 뉴스 검색 결과 출력-->
+                <hr>
+                마지막 빌드 날짜<div id = "news_lastBuildDate"></div>
+                전체 개수:<div id = "news_total"></div>
+                출력 설정 개수:<div id = "news_display"></div>
+                <div id = "news_start"></div>
+
+                <h4>제목:</h4><div id = "news_items1"></div>
+                <h4>originallink:</h4><div id = "news_items2"></div>
+                <h4>link:</h4><div id = "news_items3"></div>
+                <h4>설명:</h4><div id = "news_items4"></div>
+                <h4>게시 날짜:</h4><div id = "news_items5"></div>
+                <h4>제목:</h4><div id = "news_items6"></div>
+                <h4>originallink:</h4><div id = "news_items7"></div>
+                <h4>link:</h4><div id = "news_items8"></div>
+                <h4>설명:</h4><div id = "news_items9"></div>
+                <h4>게시 날짜:</h4><div id = "news_items10"></div>
+                <h4>제목:</h4><div id = "news_items11"></div>
+                <h4>originallink:</h4><div id = "news_items12"></div>
+                <h4>link:</h4><div id = "news_items13"></div>
+                <h4>설명:</h4><div id = "news_items14"></div>
+                <h4>게시 날짜:</h4><div id = "news_items15"></div>
+                <hr>
+            </form>
+    </div>
+    <div id = "blog_style">
+        <h2 id = "C"> 네이버 블로그 </h2>
+            <form name = "myform3">
+                <input type = "text" name = "txt3" size = "15">
+                <br><br>
+                <input type = "button" class = "button3" value = "블로그 검색" onclick = "show3(), blogSearch()">
+                <div id="msg3"></div>
+                <!-- 블로그 검색 결과 출력-->
+                <hr>
+                마지막 빌드 날짜:<div id = "blog_lastBuildDate"></div>
+                전체 개수:<div id = "blog_total"></div>
+                출력 설정 개수:<div id = "blog_display"></div>
+                <div id = "blog_start"></div>
+                <hr>
+                <h4>제목:</h4><div id = "blog_items1"></div>
+                <h4>link:</h4><div id = "blog_items2"></div>
+                <h4>설명:</h4><div id = "blog_items3"></div>
+                <h4>블로그 이름:</h4><div id = "blog_items4"></div>
+                <h4>블로그 링크:</h4><div id = "blog_items5"></div>
+                <h4>게시일</h4><div id = "blog_items6"></div>
+                <h4>제목:</h4><div id = "blog_items7"></div>
+                <h4>link:</h4><div id = "blog_items8"></div>
+                <h4>설명:</h4><div id = "blog_items9"></div>
+                <h4>블로그 이름:</h4><div id = "blog_items10"></div>
+                <h4>블로그 링크:</h4><div id = "blog_items11"></div>
+                <h4>게시일</h4><div id = "blog_items12"></div>
+                <h4>제목:</h4><div id = "blog_items13"></div>
+                <h4>link:</h4><div id = "blog_items14"></div>
+                <h4>설명:</h4><div id = "blog_items15"></div>
+                <h4>블로그 이름:</h4><div id = "blog_items16"></div>
+                <h4>블로그 링크:</h4><div id = "blog_items17"></div>
+                <h4>게시일</h4><div id = "blog_items18"></div>
+                <hr>
+            </form>
+        <br>
+    </div>
+
+    
+    
+
+</body>
+
+<hr>
+[참고]
+<br>
+<a href = "https://developers.naver.com/docs/serviceapi/datalab/search/search.md#%EA%B0%9C%EC%9A%94" target = "_blank"> 통합 트렌드 검색 설명</a>
+|
+<a href = "https://developers.naver.com/docs/serviceapi/search/news/news.md#%EB%89%B4%EC%8A%A4" target = "_blank"> 뉴스 검색 설명</a>
+|
+<a href = "https://developers.naver.com/docs/serviceapi/search/blog/blog.md#%EB%B8%94%EB%A1%9C%EA%B7%B8" target = "_blank"> 블로그 검색 설명</a>
+
+
+<footer class = 'darkbackground'>
+        <bold>Email: copes.km@gmail.com</bold>
+        <br>
+        <bold>github 주소:</bold> <a href = "https://github.com/micopes" target = "_blank">https://github.com/micopes</a>
+</footer>
+
+</html>
+
+
